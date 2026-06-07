@@ -267,6 +267,11 @@
 
   // ── Grid image click ──
   async function analyzeUrl(thumb, url) {
+    // Clear any uploaded photo
+    uploadFile = null; fileInput.value = "";
+    previewWrap.style.display = "none";
+    previewInner.classList.remove("scanning");
+
     if (selectedThumb) selectedThumb.classList.remove("selected");
     selectedThumb = thumb;
     thumb.classList.add("selected", "loading");
@@ -284,6 +289,8 @@
     if (!file) return;
     if (!file.type.startsWith("image/")) return showErr("Please upload an image file.");
     uploadFile = file;
+    // Clear any selected grid thumb
+    if (selectedThumb) { selectedThumb.classList.remove("selected"); selectedThumb = null; }
     hideErr();
     const reader = new FileReader();
     reader.onload = e => {
