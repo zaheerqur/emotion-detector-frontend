@@ -9,12 +9,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: "Golos Text", sans-serif; background: #fff; color: #0F0F0F; min-height: 100vh; }
 
-    nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 24px 40px; border-bottom: 1px solid #EBEBEB;
-    }
-    .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: 0.04em; }
-    .logo span { color: #FF6633; }
+    nav { padding: 24px 40px; border-bottom: 1px solid #EBEBEB; }
     .nav-right { font-size: 0.8rem; font-weight: 500; color: #999; }
 
     .hero { text-align: center; padding: 64px 24px 40px; max-width: 600px; margin: 0 auto; }
@@ -121,6 +116,24 @@
 
     .error { display: none; margin-bottom: 16px; padding: 13px 16px; background: #FFF5F5; border: 1px solid #FFDDDD; border-radius: 10px; font-size: 0.82rem; color: #CC3333; font-weight: 500; }
 
+    /* ── About ── */
+    .about-section {
+      border-top: 1px solid #EBEBEB; padding: 56px 40px;
+      max-width: 860px; margin: 0 auto;
+    }
+    .about-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #FF6633; margin-bottom: 20px;
+    }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .about-block h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: #0F0F0F; }
+    .about-block p { font-size: 0.88rem; color: #666; line-height: 1.75; font-weight: 400; }
+
+    @media (max-width: 600px) {
+      .about-section { padding: 40px 20px; }
+      .about-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+
     footer { border-top: 1px solid #EBEBEB; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
     footer span { font-size: 0.73rem; color: #bbb; font-weight: 500; }
 
@@ -136,8 +149,7 @@
 <body>
 
 <nav>
-  <div class="logo">LU<span>C</span>ID</div>
-  <div class="nav-right">Facial Emotion Analysis</div>
+  <div class="nav-right">Facial Emotion Analysis · COMP 472</div>
 </nav>
 
 <div class="hero">
@@ -189,6 +201,28 @@
     <div class="bars-wrap">
       <div class="bars-label">Confidence breakdown</div>
       <div id="bars"></div>
+    </div>
+  </div>
+</div>
+
+<div class="about-section">
+  <div class="about-label">About this project</div>
+  <div class="about-grid">
+    <div class="about-block">
+      <h3>What it is</h3>
+      <p>Built for COMP 472 (Artificial Intelligence) at Concordia University. The goal was to design, train, and evaluate a convolutional neural network for facial emotion recognition from scratch — no pretrained weights, no transfer learning. The model classifies faces into four categories: Angry, Engaged, Happy, and Neutral.</p>
+    </div>
+    <div class="about-block">
+      <h3>How it was trained</h3>
+      <p>The CNN was trained on the FER2013 benchmark dataset — over 35,000 grayscale 48×48 facial images. The architecture uses three convolutional blocks with BatchNorm and LeakyReLU activations, followed by fully connected layers with dropout. Three variants were evaluated; this one performed best on validation.</p>
+    </div>
+    <div class="about-block">
+      <h3>How it's deployed</h3>
+      <p>The trained PyTorch model was exported to ONNX format for serving — a standard production practice that cuts the runtime footprint from ~500MB to ~50MB without changing model behaviour. The backend runs on Flask via Render; this frontend is hosted on Netlify.</p>
+    </div>
+    <div class="about-block">
+      <h3>Why the samples</h3>
+      <p>The model was trained and evaluated on FER2013, so it performs most reliably on images from that distribution. The sample grid pulls directly from the dataset used during training. You can still upload your own photo — just know that real-world images will naturally produce less consistent results.</p>
     </div>
   </div>
 </div>
