@@ -3,552 +3,289 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFFECT — Facial Emotion Analysis</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Figtree:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <title>Lucid — Facial Emotion Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    /* ── Config ──────────────────────────────────────────────────── */
-    :root {
-      --bg:        #09090c;
-      --surface:   #111116;
-      --surface2:  #18181f;
-      --border:    #25252f;
-      --border2:   #32323e;
-      --text:      #e8e8f0;
-      --muted:     #6b6b80;
-      --accent:    #5b6cf0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Golos Text", sans-serif; background: #fff; color: #0F0F0F; min-height: 100vh; }
 
-      --angry:     #ef4444;
-      --engaged:   #818cf8;
-      --happy:     #f59e0b;
-      --neutral:   #71717a;
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 40px; border-bottom: 1px solid #EBEBEB;
+    }
+    .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: 0.04em; }
+    .logo span { color: #FF6633; }
+    .nav-right { font-size: 0.8rem; font-weight: 500; color: #999; }
 
-      --radius:    12px;
-      --mono:      "DM Mono", monospace;
+    .hero {
+      text-align: center; padding: 72px 24px 52px;
+      max-width: 600px; margin: 0 auto;
     }
+    .eyebrow {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #FF6633;
+      background: #FFF2EE; padding: 5px 14px; border-radius: 99px; margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 900;
+      line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 20px;
+    }
+    .hero p { font-size: 0.98rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto; }
 
-    /* ── Reset ───────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { height: 100%; }
-    body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Figtree", sans-serif;
-      font-weight: 400;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 48px 24px 64px;
-      line-height: 1.5;
-    }
+    .app { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
 
-    /* ── Header ──────────────────────────────────────────────────── */
-    header {
-      text-align: center;
-      margin-bottom: 48px;
-      animation: fadeUp 0.6s ease both;
-    }
-    .wordmark {
-      font-family: "Syne", sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.4rem, 5vw, 3.6rem);
-      letter-spacing: 0.18em;
-      color: var(--text);
-    }
-    .wordmark span { color: var(--accent); }
-    .tagline {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      font-family: var(--mono);
-      color: var(--muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    /* ── Main card ───────────────────────────────────────────────── */
     .card {
-      width: 100%;
-      max-width: 760px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      animation: fadeUp 0.6s 0.1s ease both;
+      background: #F9F9F9; border: 1.5px solid #EBEBEB;
+      border-radius: 14px; overflow: hidden; margin-bottom: 14px;
     }
 
-    /* ── Upload zone ─────────────────────────────────────────────── */
     #upload-zone {
-      position: relative;
-      padding: 60px 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      cursor: pointer;
-      border: 2px dashed var(--border2);
-      border-radius: var(--radius);
-      margin: 16px;
-      transition: border-color 0.2s, background 0.2s;
-      min-height: 280px;
-    }
-    #upload-zone:hover, #upload-zone.drag-over {
-      border-color: var(--accent);
-      background: rgba(91, 108, 240, 0.04);
+      padding: 52px 32px; display: flex; flex-direction: column;
+      align-items: center; gap: 16px; cursor: pointer; text-align: center;
     }
     #upload-zone input { display: none; }
+    .upload-icon-wrap {
+      width: 52px; height: 52px; background: #fff;
+      border: 1.5px solid #EBEBEB; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .upload-h { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .upload-sub { font-size: 0.82rem; color: #888; }
+    .btn-upload {
+      background: #FF6633; color: #fff; border: none; padding: 11px 26px;
+      border-radius: 8px; font-family: "Golos Text", sans-serif;
+      font-size: 0.87rem; font-weight: 700; cursor: pointer; transition: background .15s;
+    }
+    .btn-upload:hover { background: #e85a2a; }
+    .drop-area.drag-over { opacity: 0.7; }
 
-    .upload-icon {
-      width: 48px;
-      height: 48px;
-      opacity: 0.35;
-    }
-    .upload-label {
-      font-size: 1rem;
-      color: var(--muted);
-      text-align: center;
-    }
-    .upload-label strong { color: var(--text); font-weight: 600; }
-    .upload-sub {
-      font-size: 0.75rem;
-      font-family: var(--mono);
-      color: var(--muted);
-      letter-spacing: 0.05em;
-    }
+    #preview-state { display: none; padding: 20px; flex-direction: column; gap: 14px; }
 
-    /* ── Preview state ───────────────────────────────────────────── */
-    #preview-state {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-    .preview-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 360px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border2);
-    }
-    #preview-img {
-      width: 100%;
-      display: block;
-      filter: grayscale(30%);
-    }
+    .img-wrap { position: relative; border-radius: 10px; overflow: hidden; background: #e8e8e8; }
+    #preview-img { width: 100%; display: block; }
 
-    /* scan line */
     .scan-line {
-      position: absolute;
-      top: -4px;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      box-shadow: 0 0 12px var(--accent);
-      display: none;
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, #FF6633, transparent); display: none;
     }
-    .scanning .scan-line {
-      display: block;
-      animation: scan 1.4s linear infinite;
-    }
-
+    .scanning .scan-line { display: block; animation: scan 1.2s linear infinite; }
     @keyframes scan {
-      0%   { top: -4px; opacity: 0; }
-      5%   { opacity: 1; }
-      95%  { opacity: 1; }
-      100% { top: 100%; opacity: 0; }
+      0% { top: 0; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; }
     }
+    .scanning-label {
+      position: absolute; bottom: 10px; left: 10px;
+      background: rgba(255,255,255,.92); border: 1px solid #eee; border-radius: 6px;
+      padding: 4px 10px; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: #FF6633; display: none;
+    }
+    .scanning .scanning-label { display: block; animation: blink .8s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* overlay during scan */
-    .preview-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(9, 9, 12, 0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .scanning .preview-overlay { display: flex; }
-    .scan-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      text-transform: uppercase;
-      animation: blink 1s step-end infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
-    .preview-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-    }
+    .preview-actions { display: flex; gap: 10px; }
     .btn {
-      padding: 10px 28px;
-      border-radius: 8px;
-      font-family: "Figtree", sans-serif;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s, transform 0.1s;
+      flex: 1; padding: 12px; border-radius: 8px; font-family: "Golos Text", sans-serif;
+      font-size: 0.87rem; font-weight: 700; cursor: pointer; border: none; transition: background .15s;
     }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-ghost {
-      background: var(--surface2);
-      color: var(--muted);
-      border: 1px solid var(--border2);
-    }
-    .btn-ghost:hover { color: var(--text); }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: #FF6633; color: #fff; }
+    .btn-primary:hover { background: #e85a2a; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-ghost { background: #fff; color: #555; border: 1.5px solid #EBEBEB; }
+    .btn-ghost:hover { border-color: #bbb; }
 
-    /* ── Results ──────────────────────────────────────────────────── */
-    #results {
-      display: none;
-      padding: 32px 40px 40px;
-      border-top: 1px solid var(--border);
-      animation: fadeUp 0.4s ease both;
+    #results-card {
+      display: none; background: #F9F9F9;
+      border: 1.5px solid #EBEBEB; border-radius: 14px; overflow: hidden;
     }
+    .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #EBEBEB; }
+    .result-micro {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: #bbb; margin-bottom: 6px;
+    }
+    .result-emotion { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 900; letter-spacing: -.03em; line-height: 1; }
+    .result-conf { margin-top: 8px; font-size: 0.84rem; color: #888; font-weight: 500; }
+    .result-conf strong { color: #0F0F0F; }
 
-    .result-header {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      margin-bottom: 28px;
-    }
-    .result-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-    .result-emotion {
-      font-family: "Syne", sans-serif;
-      font-weight: 800;
-      font-size: clamp(2rem, 6vw, 3.2rem);
-      line-height: 1;
-      letter-spacing: 0.05em;
-    }
-    .result-confidence {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-left: auto;
+    .bars-wrap { padding: 22px 28px 28px; }
+    .bars-label { font-size: 0.68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #bbb; margin-bottom: 16px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
+    .bar-name { width: 64px; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 8px; background: #E8E8E8; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width .8s cubic-bezier(.22,1,.36,1); }
+    .bar-pct { width: 38px; text-align: right; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
+
+    .error {
+      display: none; margin-bottom: 14px; padding: 13px 16px;
+      background: #FFF5F5; border: 1px solid #FFDDDD; border-radius: 10px;
+      font-size: 0.82rem; color: #CC3333; font-weight: 500;
     }
 
-    /* ── Bars ─────────────────────────────────────────────────────── */
-    .bars { display: flex; flex-direction: column; gap: 14px; }
-
-    .bar-row { display: flex; align-items: center; gap: 12px; }
-    .bar-name {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      width: 68px;
-      flex-shrink: 0;
-    }
-    .bar-track {
-      flex: 1;
-      height: 6px;
-      background: var(--surface2);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .bar-pct {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--muted);
-      width: 42px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* ── Divider ──────────────────────────────────────────────────── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 0 16px;
-    }
-
-    /* ── Footer ───────────────────────────────────────────────────── */
     footer {
-      margin-top: 32px;
-      font-size: 0.72rem;
-      font-family: var(--mono);
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-align: center;
-      animation: fadeUp 0.6s 0.2s ease both;
+      border-top: 1px solid #EBEBEB; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
     }
+    footer span { font-size: 0.73rem; color: #bbb; font-weight: 500; }
 
-    /* ── Error banner ─────────────────────────────────────────────── */
-    .error-banner {
-      display: none;
-      margin: 0 16px 16px;
-      padding: 12px 16px;
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      color: #ef4444;
-      font-family: var(--mono);
-    }
-
-    /* ── Animations ───────────────────────────────────────────────── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 540px) {
-      #upload-zone { padding: 40px 20px; }
-      #results { padding: 24px 20px 32px; }
+      nav { padding: 18px 20px; }
+      .hero { padding: 48px 20px 36px; }
+      .app { padding: 0 16px 60px; }
+      footer { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="wordmark">AFF<span>E</span>CT</div>
-    <div class="tagline">Facial Emotion Analysis · CNN Model</div>
-  </header>
+<nav>
+  <div class="logo">LU<span>C</span>ID</div>
+  <div class="nav-right">Facial Emotion Analysis</div>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">AI · COMP 472 · Concordia University</div>
+  <h1>Upload a face.<br>Read the emotion.</h1>
+  <p>A convolutional neural network trained on the FER2013 dataset. Upload any photo with a face and the model classifies the emotion in real time.</p>
+</div>
+
+<div class="app">
+  <div class="error" id="error-banner"></div>
 
   <div class="card">
-
-    <!-- Upload zone -->
     <div id="upload-zone">
       <input type="file" id="file-input" accept="image/*" />
-
-      <div id="empty-state">
-        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
-        <div class="upload-label"><strong>Drop an image here</strong> or click to browse</div>
-        <div class="upload-sub">PNG · JPG · WEBP</div>
-      </div>
-
-      <div id="preview-state">
-        <div class="preview-wrapper" id="preview-wrapper">
-          <img id="preview-img" alt="Preview" />
-          <div class="scan-line"></div>
-          <div class="preview-overlay">
-            <span class="scan-label">Analyzing</span>
-          </div>
+      <div class="drop-area" id="drop-area">
+        <div class="upload-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
         </div>
-        <div class="preview-actions">
-          <button class="btn btn-primary" id="analyze-btn">Analyze</button>
-          <button class="btn btn-ghost" id="reset-btn">Reset</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="error-banner" id="error-banner"></div>
-
-    <div class="divider"></div>
-
-    <!-- Results -->
-    <div id="results">
-      <div class="result-header">
         <div>
-          <div class="result-label">Detected emotion</div>
-          <div class="result-emotion" id="result-emotion">—</div>
+          <div class="upload-h">Drop an image here</div>
+          <div class="upload-sub">PNG, JPG or WEBP · works best with a clear face photo</div>
         </div>
-        <div class="result-confidence" id="result-confidence"></div>
+        <button class="btn-upload">Choose file</button>
       </div>
-      <div class="bars" id="bars"></div>
     </div>
 
+    <div id="preview-state">
+      <div class="img-wrap" id="img-wrap">
+        <img id="preview-img" alt="Preview" />
+        <div class="scan-line"></div>
+        <div class="scanning-label">Analyzing...</div>
+      </div>
+      <div class="preview-actions">
+        <button class="btn btn-primary" id="analyze-btn">Analyze</button>
+        <button class="btn btn-ghost" id="reset-btn">Try another</button>
+      </div>
+    </div>
   </div>
 
-  <footer>COMP 472 · Concordia University · CNN trained on FER2013</footer>
+  <div id="results-card">
+    <div class="result-top">
+      <div class="result-micro">Detected emotion</div>
+      <div class="result-emotion" id="result-emotion">—</div>
+      <div class="result-conf" id="result-conf"></div>
+    </div>
+    <div class="bars-wrap">
+      <div class="bars-label">Confidence breakdown</div>
+      <div id="bars"></div>
+    </div>
+  </div>
+</div>
 
-  <script>
-    // ── CONFIG — replace with your Render URL after deploying ─────────────
-    const API_URL = "https://emotion-detector-api-7ygm.onrender.com";
-    // ─────────────────────────────────────────────────────────────────────
+<footer>
+  <span>Trained with PyTorch · Served with ONNX Runtime</span>
+  <span>COMP 472 · Concordia University · 2025</span>
+</footer>
 
-    const EMOTION_COLORS = {
-      Angry:    "var(--angry)",
-      Engaged:  "var(--engaged)",
-      Happy:    "var(--happy)",
-      Neutral:  "var(--neutral)",
+<script>
+  const API_URL = "https://emotion-detector-api-7ygm.onrender.com";
+  const COLORS = { Angry:"#FF3333", Engaged:"#4466FF", Happy:"#FF9900", Neutral:"#AAAAAA" };
+
+  const uploadZone  = document.getElementById("upload-zone");
+  const dropArea    = document.getElementById("drop-area");
+  const fileInput   = document.getElementById("file-input");
+  const previewState= document.getElementById("preview-state");
+  const previewImg  = document.getElementById("preview-img");
+  const imgWrap     = document.getElementById("img-wrap");
+  const analyzeBtn  = document.getElementById("analyze-btn");
+  const resetBtn    = document.getElementById("reset-btn");
+  const resultsCard = document.getElementById("results-card");
+  const emotionEl   = document.getElementById("result-emotion");
+  const confEl      = document.getElementById("result-conf");
+  const barsEl      = document.getElementById("bars");
+  const errorEl     = document.getElementById("error-banner");
+
+  let currentFile = null;
+
+  uploadZone.addEventListener("click", (e) => {
+    if (e.target.closest("#preview-state")) return;
+    fileInput.click();
+  });
+  fileInput.addEventListener("change", () => { if (fileInput.files[0]) load(fileInput.files[0]); });
+  dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("drag-over"); });
+  dropArea.addEventListener("dragleave", () => dropArea.classList.remove("drag-over"));
+  dropArea.addEventListener("drop", (e) => {
+    e.preventDefault(); dropArea.classList.remove("drag-over");
+    if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
+  });
+
+  function load(file) {
+    if (!file.type.startsWith("image/")) return showErr("Please upload an image file.");
+    currentFile = file; hideErr(); resultsCard.style.display = "none";
+    const r = new FileReader();
+    r.onload = (e) => {
+      previewImg.src = e.target.result;
+      uploadZone.style.display = "none";
+      previewState.style.cssText = "display:flex;flex-direction:column;gap:14px;padding:20px;";
     };
+    r.readAsDataURL(file);
+  }
 
-    const zone        = document.getElementById("upload-zone");
-    const fileInput   = document.getElementById("file-input");
-    const emptyState  = document.getElementById("empty-state");
-    const previewState= document.getElementById("preview-state");
-    const previewImg  = document.getElementById("preview-img");
-    const previewWrap = document.getElementById("preview-wrapper");
-    const analyzeBtn  = document.getElementById("analyze-btn");
-    const resetBtn    = document.getElementById("reset-btn");
-    const results     = document.getElementById("results");
-    const emotionEl   = document.getElementById("result-emotion");
-    const confEl      = document.getElementById("result-confidence");
-    const barsEl      = document.getElementById("bars");
-    const errorBanner = document.getElementById("error-banner");
+  resetBtn.addEventListener("click", () => {
+    currentFile = null; fileInput.value = "";
+    previewState.style.display = "none"; uploadZone.style.display = "flex";
+    resultsCard.style.display = "none"; imgWrap.classList.remove("scanning");
+    analyzeBtn.disabled = false; hideErr();
+  });
 
-    let currentFile = null;
+  analyzeBtn.addEventListener("click", async () => {
+    if (!currentFile) return;
+    hideErr(); analyzeBtn.disabled = true; imgWrap.classList.add("scanning");
+    resultsCard.style.display = "none";
+    const fd = new FormData(); fd.append("image", currentFile);
+    try {
+      const res = await fetch(`${API_URL}/predict`, { method:"POST", body:fd });
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Server error"); }
+      showResults(await res.json());
+    } catch(e) {
+      showErr(e.message === "Failed to fetch"
+        ? "Could not reach the API — it may be waking up. Wait 30 seconds and try again."
+        : e.message);
+    } finally { imgWrap.classList.remove("scanning"); analyzeBtn.disabled = false; }
+  });
 
-    // ── File selection ──────────────────────────────────────────────
-    zone.addEventListener("click", (e) => {
-      if (e.target === analyzeBtn || e.target === resetBtn) return;
-      fileInput.click();
+  function showResults(data) {
+    const color = COLORS[data.prediction] || "#0F0F0F";
+    emotionEl.textContent = data.prediction;
+    emotionEl.style.color = color;
+    confEl.innerHTML = `<strong>${data.confidence}%</strong> confidence`;
+    barsEl.innerHTML = "";
+    Object.entries(data.scores).sort((a,b)=>b[1]-a[1]).forEach(([name,pct]) => {
+      const row = document.createElement("div");
+      row.className = "bar-row";
+      row.innerHTML = `<span class="bar-name">${name}</span><div class="bar-track"><div class="bar-fill" data-pct="${pct}" style="background:${COLORS[name]||'#ccc'}"></div></div><span class="bar-pct">${pct}%</span>`;
+      barsEl.appendChild(row);
     });
+    resultsCard.style.display = "block";
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      document.querySelectorAll(".bar-fill").forEach(el=>{ el.style.width = el.dataset.pct+"%"; });
+    }));
+  }
 
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files[0]) loadFile(fileInput.files[0]);
-    });
-
-    zone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      zone.classList.add("drag-over");
-    });
-    zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
-    zone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      zone.classList.remove("drag-over");
-      if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
-    });
-
-    function loadFile(file) {
-      if (!file.type.startsWith("image/")) return showError("Please upload an image file.");
-      currentFile = file;
-      hideError();
-      hideResults();
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        emptyState.style.display = "none";
-        previewState.style.display = "flex";
-        previewState.style.flexDirection = "column";
-        previewState.style.alignItems = "center";
-        previewState.style.gap = "0";
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // ── Reset ───────────────────────────────────────────────────────
-    resetBtn.addEventListener("click", () => {
-      currentFile = null;
-      fileInput.value = "";
-      previewState.style.display = "none";
-      emptyState.style.display = "flex";
-      emptyState.style.flexDirection = "column";
-      emptyState.style.alignItems = "center";
-      emptyState.style.gap = "16px";
-      hideResults();
-      hideError();
-      previewWrap.classList.remove("scanning");
-      analyzeBtn.disabled = false;
-    });
-
-    // ── Analyze ─────────────────────────────────────────────────────
-    analyzeBtn.addEventListener("click", async () => {
-      if (!currentFile) return;
-      hideError();
-      hideResults();
-      analyzeBtn.disabled = true;
-      previewWrap.classList.add("scanning");
-
-      const formData = new FormData();
-      formData.append("image", currentFile);
-
-      try {
-        const res = await fetch(`${API_URL}/predict`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Server error");
-        }
-
-        const data = await res.json();
-        showResults(data);
-
-      } catch (err) {
-        showError(err.message === "Failed to fetch"
-          ? "Could not reach the API. Make sure the backend is deployed and the API_URL is updated."
-          : err.message
-        );
-      } finally {
-        previewWrap.classList.remove("scanning");
-        analyzeBtn.disabled = false;
-      }
-    });
-
-    // ── Render results ──────────────────────────────────────────────
-    function showResults(data) {
-      const color = EMOTION_COLORS[data.prediction] || "var(--text)";
-      emotionEl.textContent = data.prediction.toUpperCase();
-      emotionEl.style.color = color;
-      confEl.textContent = `${data.confidence}% confidence`;
-
-      barsEl.innerHTML = "";
-      Object.entries(data.scores)
-        .sort((a, b) => b[1] - a[1])
-        .forEach(([name, pct]) => {
-          const row = document.createElement("div");
-          row.className = "bar-row";
-          row.innerHTML = `
-            <span class="bar-name">${name}</span>
-            <div class="bar-track">
-              <div class="bar-fill" data-pct="${pct}" style="background:${EMOTION_COLORS[name] || "#fff"}"></div>
-            </div>
-            <span class="bar-pct">${pct}%</span>
-          `;
-          barsEl.appendChild(row);
-        });
-
-      results.style.display = "block";
-
-      // Animate bars after paint
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          document.querySelectorAll(".bar-fill").forEach((el) => {
-            el.style.width = `${el.dataset.pct}%`;
-          });
-        });
-      });
-    }
-
-    function hideResults() {
-      results.style.display = "none";
-      barsEl.innerHTML = "";
-    }
-
-    function showError(msg) {
-      errorBanner.textContent = msg;
-      errorBanner.style.display = "block";
-    }
-
-    function hideError() {
-      errorBanner.style.display = "none";
-    }
-  </script>
-
+  function showErr(msg) { errorEl.textContent = msg; errorEl.style.display = "block"; }
+  function hideErr() { errorEl.style.display = "none"; }
+</script>
 </body>
 </html>
