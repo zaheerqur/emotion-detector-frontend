@@ -3,160 +3,179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucid — Facial Emotion Analysis</title>
-  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <title>Facial Emotion Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Golos Text", sans-serif; background: #fff; color: #0F0F0F; min-height: 100vh; }
+    body { font-family: "Golos Text", sans-serif; background: #fff; color: #111; min-height: 100vh; }
 
-    nav { padding: 24px 40px; border-bottom: 1px solid #EBEBEB; }
-    .nav-right { font-size: 0.8rem; font-weight: 500; color: #999; }
-
-    .hero { text-align: center; padding: 64px 24px 40px; max-width: 600px; margin: 0 auto; }
+    /* ── Hero ── */
+    .hero { padding: 72px 40px 52px; max-width: 860px; margin: 0 auto; }
     .eyebrow {
-      display: inline-block; font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: #FF6633;
-      background: #FFF2EE; padding: 5px 14px; border-radius: 99px; margin-bottom: 24px;
+      font-size: 0.73rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #999; display: block; margin-bottom: 20px;
     }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 18px; }
-    .hero p { font-size: 0.95rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto 16px; }
-    .disclaimer { display: block; font-size: 0.75rem; color: #AAA; font-weight: 500; line-height: 1.6; max-width: 480px; margin: 0 auto; }
+    .hero h1 {
+      font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800;
+      line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 16px; max-width: 520px;
+    }
+    .hero p {
+      font-size: 0.95rem; color: #666; line-height: 1.7;
+      max-width: 480px; font-weight: 400;
+    }
 
-    .app { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+    /* ── App ── */
+    .app { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
 
-    #loading-msg { text-align: center; padding: 48px; font-size: 0.85rem; color: #999; font-weight: 500; }
+    #loading-msg { padding: 40px 0; font-size: 0.84rem; color: #aaa; font-weight: 500; }
     .spinner {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2px solid #EBEBEB; border-top-color: #FF6633;
+      display: inline-block; width: 16px; height: 16px;
+      border: 1.5px solid #E8E8E8; border-top-color: #FF6633;
       border-radius: 50%; animation: spin .7s linear infinite;
       vertical-align: middle; margin-right: 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── Grid ── */
     #samples-grid { display: none; }
-    .grid-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #CCC; margin-bottom: 14px; }
-
+    .grid-label {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #C8C8C8; margin-bottom: 12px;
+    }
     .faces-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-      gap: 8px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+      gap: 6px; margin-bottom: 32px;
     }
-
     .face-thumb {
-      aspect-ratio: 1; border-radius: 8px; overflow: hidden;
-      cursor: pointer; border: 2px solid transparent;
-      transition: border-color .15s, transform .1s, opacity .15s; background: #F0F0F0;
+      aspect-ratio: 1; border-radius: 4px; overflow: hidden;
+      cursor: pointer; border: 1.5px solid transparent;
+      transition: border-color .12s, opacity .12s; background: #F2F2F2;
     }
-    .face-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(15%); }
-    .face-thumb:hover { border-color: #FF6633; transform: scale(1.04); }
-    .face-thumb.selected { border-color: #FF6633; box-shadow: 0 0 0 3px rgba(255,102,51,.18); }
-    .face-thumb.loading { opacity: 0.45; pointer-events: none; }
+    .face-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(25%); transition: filter .12s; }
+    .face-thumb:hover img { filter: grayscale(0%); }
+    .face-thumb:hover { border-color: #E0E0E0; }
+    .face-thumb.selected { border-color: #FF6633; }
+    .face-thumb.loading { opacity: 0.4; pointer-events: none; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: #F0F0F0; margin: 0 0 24px; }
 
     /* ── Upload row ── */
-    .divider { height: 1px; background: #EBEBEB; margin: 4px 0 24px; }
-
-    .upload-row {
-      display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;
-    }
-    .upload-or { font-size: 0.82rem; font-weight: 600; color: #666; }
+    .upload-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .upload-or { font-size: 0.82rem; font-weight: 500; color: #888; }
     .btn-upload {
-      background: #FF6633; color: #fff; border: none; padding: 9px 20px;
-      border-radius: 8px; font-family: "Golos Text", sans-serif;
-      font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background .15s;
-      white-space: nowrap;
+      background: transparent; color: #FF6633; border: 1px solid #FF6633;
+      padding: 8px 18px; border-radius: 4px; font-family: "Golos Text", sans-serif;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background .12s, color .12s;
+      white-space: nowrap; letter-spacing: 0.02em;
     }
-    .btn-upload:hover { background: #e85a2a; }
-    .upload-note { font-size: 0.73rem; color: #bbb; font-weight: 500; }
+    .btn-upload:hover { background: #FF6633; color: #fff; }
+    .upload-note { font-size: 0.72rem; color: #C8C8C8; font-weight: 400; }
 
-    /* ── Preview (upload) ── */
+    /* ── Preview ── */
     .preview-inner {
-      position: relative; border-radius: 10px; overflow: hidden;
-      background: #f0f0f0; max-width: 320px; margin-bottom: 12px;
+      position: relative; border-radius: 4px; overflow: hidden;
+      background: #F2F2F2; max-width: 280px; margin-bottom: 12px;
     }
     #preview-img { width: 100%; display: block; }
     .scan-line {
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      position: absolute; top: 0; left: 0; right: 0; height: 1.5px;
       background: linear-gradient(90deg, transparent, #FF6633, transparent); display: none;
     }
     .scanning .scan-line { display: block; animation: scan 1.2s linear infinite; }
     @keyframes scan { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
     .scanning-label {
-      position: absolute; bottom: 10px; left: 10px;
-      background: rgba(255,255,255,.92); border: 1px solid #eee; border-radius: 6px;
-      padding: 4px 10px; font-size: 0.68rem; font-weight: 700;
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(255,255,255,.94); border: 1px solid #eee; border-radius: 3px;
+      padding: 3px 8px; font-size: 0.65rem; font-weight: 600;
       letter-spacing: .1em; text-transform: uppercase; color: #FF6633; display: none;
     }
-    .scanning .scanning-label { display: block; animation: blink .8s step-end infinite; }
+    .scanning .scanning-label { display: block; animation: blink .9s step-end infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    .preview-actions { display: flex; gap: 10px; max-width: 320px; }
-    .btn { flex: 1; padding: 11px; border-radius: 8px; font-family: "Golos Text", sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none; transition: background .15s; }
+    .preview-actions { display: flex; gap: 8px; max-width: 280px; }
+    .btn {
+      flex: 1; padding: 9px 12px; border-radius: 4px;
+      font-family: "Golos Text", sans-serif; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: none; transition: background .12s; letter-spacing: 0.02em;
+    }
     .btn-primary { background: #FF6633; color: #fff; }
     .btn-primary:hover { background: #e85a2a; }
-    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-ghost { background: #fff; color: #555; border: 1.5px solid #EBEBEB; }
-    .btn-ghost:hover { border-color: #bbb; }
+    .btn-primary:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: #888; border: 1px solid #E8E8E8; }
+    .btn-ghost:hover { border-color: #C8C8C8; color: #444; }
 
     /* ── Results ── */
     #results-card {
-      display: none; background: #F9F9F9;
-      border: 1.5px solid #EBEBEB; border-radius: 14px; overflow: hidden; margin-top: 20px;
+      display: none; border: 1px solid #EBEBEB; border-radius: 6px;
+      overflow: hidden; margin-top: 24px;
     }
-    .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #EBEBEB; }
-    .result-micro { font-size: 0.68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
-    .result-emotion { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 900; letter-spacing: -.03em; line-height: 1; }
-    .result-conf { margin-top: 8px; font-size: 0.84rem; color: #888; font-weight: 500; }
-    .result-conf strong { color: #0F0F0F; }
-    .bars-wrap { padding: 22px 28px 28px; }
-    .bars-label { font-size: 0.68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #bbb; margin-bottom: 16px; }
-    .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
-    .bar-name { width: 64px; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
-    .bar-track { flex: 1; height: 8px; background: #E8E8E8; border-radius: 99px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width .8s cubic-bezier(.22,1,.36,1); }
-    .bar-pct { width: 38px; text-align: right; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
+    .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #F0F0F0; }
+    .result-micro {
+      font-size: 0.67rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: #C8C8C8; margin-bottom: 8px;
+    }
+    .result-emotion {
+      font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 800;
+      letter-spacing: -.025em; line-height: 1;
+    }
+    .result-conf { margin-top: 10px; font-size: 0.82rem; color: #999; font-weight: 400; }
+    .result-conf strong { color: #444; font-weight: 600; }
 
-    .error { display: none; margin-bottom: 16px; padding: 13px 16px; background: #FFF5F5; border: 1px solid #FFDDDD; border-radius: 10px; font-size: 0.82rem; color: #CC3333; font-weight: 500; }
+    .bars-wrap { padding: 22px 28px 26px; }
+    .bars-label {
+      font-size: 0.67rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: #C8C8C8; margin-bottom: 16px;
+    }
+    .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .bar-name { width: 62px; font-size: 0.79rem; font-weight: 500; color: #888; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 5px; background: #F0F0F0; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 2px; width: 0%; transition: width .8s cubic-bezier(.22,1,.36,1); }
+    .bar-pct { width: 36px; text-align: right; font-size: 0.79rem; font-weight: 500; color: #999; flex-shrink: 0; }
+
+    /* ── Error ── */
+    .error {
+      display: none; margin-bottom: 16px; padding: 12px 16px;
+      border: 1px solid #FFD8D0; border-radius: 4px; border-left: 3px solid #FF6633;
+      font-size: 0.81rem; color: #B34020; font-weight: 500;
+    }
 
     /* ── About ── */
     .about-section {
-      border-top: 1px solid #EBEBEB; padding: 56px 40px;
+      border-top: 1px solid #F0F0F0; padding: 56px 40px;
       max-width: 860px; margin: 0 auto;
     }
     .about-label {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: #FF6633; margin-bottom: 20px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #C8C8C8; margin-bottom: 28px;
     }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-    .about-block h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: #0F0F0F; }
-    .about-block p { font-size: 0.88rem; color: #666; line-height: 1.75; font-weight: 400; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .about-block h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; color: #222; }
+    .about-block p { font-size: 0.85rem; color: #777; line-height: 1.75; font-weight: 400; }
 
-    @media (max-width: 600px) {
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid #F0F0F0; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer span { font-size: 0.71rem; color: #C8C8C8; font-weight: 400; }
+
+    @media (max-width: 640px) {
+      .hero { padding: 48px 20px 36px; }
+      .app { padding: 0 20px 60px; }
+      .faces-grid { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); }
       .about-section { padding: 40px 20px; }
-      .about-grid { grid-template-columns: 1fr; gap: 28px; }
-    }
-
-    footer { border-top: 1px solid #EBEBEB; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
-    footer span { font-size: 0.73rem; color: #bbb; font-weight: 500; }
-
-    @media (max-width: 600px) {
-      nav { padding: 18px 20px; }
-      .hero { padding: 48px 20px 32px; }
-      .app { padding: 0 16px 60px; }
-      .faces-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+      .about-grid { grid-template-columns: 1fr; gap: 24px; }
       footer { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-right">Facial Emotion Analysis · COMP 472</div>
-</nav>
-
 <div class="hero">
-  <div class="eyebrow">AI · COMP 472 · Concordia University</div>
+  <span class="eyebrow">Concordia University · COMP 472 · Artificial Intelligence</span>
   <h1>Click a face.<br>Read the emotion.</h1>
   <p>A convolutional neural network that classifies facial emotions in real time. Click any photo below to run the model.</p>
-  <span class="disclaimer">This model was trained and evaluated on the FER2013 benchmark dataset. Results may vary for photos outside the dataset — that's expected behaviour for any CNN trained on a specific distribution.</span>
 </div>
 
 <div class="app">
@@ -169,7 +188,6 @@
 
     <div class="divider"></div>
 
-    <!-- Upload option -->
     <div class="upload-row">
       <span class="upload-or">Or upload your own</span>
       <label class="btn-upload">
@@ -183,9 +201,9 @@
       <div class="preview-inner" id="preview-inner">
         <img id="preview-img" alt="Preview" />
         <div class="scan-line"></div>
-        <div class="scanning-label">Analyzing...</div>
+        <div class="scanning-label">Analyzing</div>
       </div>
-      <div class="preview-actions" style="margin-top:12px;">
+      <div class="preview-actions" style="margin-top:10px;">
         <button class="btn btn-primary" id="analyze-btn">Analyze</button>
         <button class="btn btn-ghost" id="reset-btn">Remove</button>
       </div>
@@ -195,7 +213,7 @@
   <div id="results-card">
     <div class="result-top">
       <div class="result-micro">Detected emotion</div>
-      <div class="result-emotion" id="result-emotion">—</div>
+      <div class="result-emotion" id="result-emotion"></div>
       <div class="result-conf" id="result-conf"></div>
     </div>
     <div class="bars-wrap">
@@ -210,19 +228,19 @@
   <div class="about-grid">
     <div class="about-block">
       <h3>What it is</h3>
-      <p>Built for COMP 472 (Artificial Intelligence) at Concordia University. The goal was to design, train, and evaluate a convolutional neural network for facial emotion recognition from scratch — no pretrained weights, no transfer learning. The model classifies faces into four categories: Angry, Engaged, Happy, and Neutral.</p>
+      <p>Built for COMP 472 at Concordia University. The goal was to design, train, and evaluate a convolutional neural network for facial emotion recognition from scratch, with no pretrained weights and no transfer learning. The model classifies faces into four categories: Angry, Engaged, Happy, and Neutral.</p>
     </div>
     <div class="about-block">
       <h3>How it was trained</h3>
-      <p>The CNN was trained on the FER2013 benchmark dataset — over 35,000 grayscale 48×48 facial images. The architecture uses three convolutional blocks with BatchNorm and LeakyReLU activations, followed by fully connected layers with dropout. Three variants were evaluated; this one performed best on validation.</p>
+      <p>The CNN was trained on the FER2013 benchmark dataset with over 35,000 grayscale 48x48 facial images. The architecture uses three convolutional blocks with BatchNorm and LeakyReLU activations, followed by fully connected layers with dropout. Three variants were evaluated; this one performed best on validation.</p>
     </div>
     <div class="about-block">
-      <h3>How it's deployed</h3>
-      <p>The trained PyTorch model was exported to ONNX format for serving — a standard production practice that cuts the runtime footprint from ~500MB to ~50MB without changing model behaviour. The backend runs on Flask via Render; this frontend is hosted on Netlify.</p>
+      <h3>How it is deployed</h3>
+      <p>The trained PyTorch model was exported to ONNX format for serving. This cuts the runtime footprint from around 500MB to 50MB without changing model behaviour. The backend runs on Flask via Render and this frontend is hosted on Netlify.</p>
     </div>
     <div class="about-block">
       <h3>Why the samples</h3>
-      <p>The model was trained and evaluated on FER2013, so it performs most reliably on images from that distribution. The sample grid pulls directly from the dataset used during training. You can still upload your own photo — just know that real-world images will naturally produce less consistent results.</p>
+      <p>The model performs most reliably on images from the FER2013 distribution it was trained on. The sample grid pulls directly from that dataset. You can still upload your own photo, but results will naturally be less consistent for real-world images.</p>
     </div>
   </div>
 </div>
@@ -237,7 +255,7 @@
   const REPO      = "zaheerqur/lucid-472-dataset";
   const PER_CLASS = 8;
   const CLASSES   = ["Angry", "Engaged", "Happy", "Neutral"];
-  const COLORS    = { Angry:"#FF3333", Engaged:"#4466FF", Happy:"#FF9900", Neutral:"#AAAAAA" };
+  const COLORS    = { Angry:"#E8390E", Engaged:"#2B4EE8", Happy:"#D98000", Neutral:"#888888" };
 
   const loadingMsg  = document.getElementById("loading-msg");
   const samplesGrid = document.getElementById("samples-grid");
@@ -274,7 +292,6 @@
           .then(files => shuffle(files).slice(0, PER_CLASS))
       );
       const results = await Promise.all(fetches);
-
       const all = [];
       const maxLen = Math.max(...results.map(r=>r.length));
       for (let i=0; i<maxLen; i++) results.forEach(c=>{ if(c[i]) all.push(c[i]); });
@@ -295,17 +312,14 @@
     } catch(e) {
       loadingMsg.style.display = "none";
       samplesGrid.style.display = "block";
-      showErr("Could not load samples — GitHub API may be rate limited. Try refreshing in a minute.");
+      showErr("Could not load samples. The GitHub API may be rate limited. Try refreshing in a minute.");
     }
   }
 
-  // ── Grid image click ──
   async function analyzeUrl(thumb, url) {
-    // Clear any uploaded photo
     uploadFile = null; fileInput.value = "";
     previewWrap.style.display = "none";
     previewInner.classList.remove("scanning");
-
     if (selectedThumb) selectedThumb.classList.remove("selected");
     selectedThumb = thumb;
     thumb.classList.add("selected", "loading");
@@ -317,13 +331,11 @@
     finally { thumb.classList.remove("loading"); }
   }
 
-  // ── File upload ──
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) return showErr("Please upload an image file.");
     uploadFile = file;
-    // Clear any selected grid thumb
     if (selectedThumb) { selectedThumb.classList.remove("selected"); selectedThumb = null; }
     hideErr();
     const reader = new FileReader();
@@ -331,7 +343,6 @@
       previewImg.src = e.target.result;
       previewWrap.style.display = "block";
       resultsCard.style.display = "none";
-      if (selectedThumb) { selectedThumb.classList.remove("selected"); selectedThumb = null; }
     };
     reader.readAsDataURL(file);
   });
@@ -353,7 +364,6 @@
     hideErr();
   });
 
-  // ── Shared prediction logic ──
   async function runPrediction(blob) {
     const fd = new FormData(); fd.append("image", blob, "face.jpg");
     const res = await fetch(`${API_URL}/predict`, { method:"POST", body:fd });
@@ -362,7 +372,7 @@
   }
 
   function showResults(data) {
-    const color = COLORS[data.prediction] || "#0F0F0F";
+    const color = COLORS[data.prediction] || "#222";
     emotionEl.textContent = data.prediction;
     emotionEl.style.color = color;
     confEl.innerHTML = `<strong>${data.confidence}%</strong> confidence`;
