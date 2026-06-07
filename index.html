@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AFFECT — Facial Emotion Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Figtree:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Config ──────────────────────────────────────────────────── */
+    :root {
+      --bg:        #09090c;
+      --surface:   #111116;
+      --surface2:  #18181f;
+      --border:    #25252f;
+      --border2:   #32323e;
+      --text:      #e8e8f0;
+      --muted:     #6b6b80;
+      --accent:    #5b6cf0;
+
+      --angry:     #ef4444;
+      --engaged:   #818cf8;
+      --happy:     #f59e0b;
+      --neutral:   #71717a;
+
+      --radius:    12px;
+      --mono:      "DM Mono", monospace;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Figtree", sans-serif;
+      font-weight: 400;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 64px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .wordmark {
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      letter-spacing: 0.18em;
+      color: var(--text);
+    }
+    .wordmark span { color: var(--accent); }
+    .tagline {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /* ── Main card ───────────────────────────────────────────────── */
+    .card {
+      width: 100%;
+      max-width: 760px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    /* ── Upload zone ─────────────────────────────────────────────── */
+    #upload-zone {
+      position: relative;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      border: 2px dashed var(--border2);
+      border-radius: var(--radius);
+      margin: 16px;
+      transition: border-color 0.2s, background 0.2s;
+      min-height: 280px;
+    }
+    #upload-zone:hover, #upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(91, 108, 240, 0.04);
+    }
+    #upload-zone input { display: none; }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      opacity: 0.35;
+    }
+    .upload-label {
+      font-size: 1rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .upload-label strong { color: var(--text); font-weight: 600; }
+    .upload-sub {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Preview state ───────────────────────────────────────────── */
+    #preview-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .preview-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border2);
+    }
+    #preview-img {
+      width: 100%;
+      display: block;
+      filter: grayscale(30%);
+    }
+
+    /* scan line */
+    .scan-line {
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow: 0 0 12px var(--accent);
+      display: none;
+    }
+    .scanning .scan-line {
+      display: block;
+      animation: scan 1.4s linear infinite;
+    }
+
+    @keyframes scan {
+      0%   { top: -4px; opacity: 0; }
+      5%   { opacity: 1; }
+      95%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* overlay during scan */
+    .preview-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 9, 12, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .scanning .preview-overlay { display: flex; }
+    .scan-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-family: "Figtree", sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Results ──────────────────────────────────────────────────── */
+    #results {
+      display: none;
+      padding: 32px 40px 40px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .result-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .result-emotion {
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+    .result-confidence {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ── Bars ─────────────────────────────────────────────────────── */
+    .bars { display: flex; flex-direction: column; gap: 14px; }
+
+    .bar-row { display: flex; align-items: center; gap: 12px; }
+    .bar-name {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      width: 68px;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .bar-pct {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 42px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Divider ──────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 16px;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      margin-top: 32px;
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-align: center;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    /* ── Error banner ─────────────────────────────────────────────── */
+    .error-banner {
+      display: none;
+      margin: 0 16px 16px;
+      padding: 12px 16px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #ef4444;
+      font-family: var(--mono);
+    }
+
+    /* ── Animations ───────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 540px) {
+      #upload-zone { padding: 40px 20px; }
+      #results { padding: 24px 20px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wordmark">AFF<span>E</span>CT</div>
+    <div class="tagline">Facial Emotion Analysis · CNN Model</div>
+  </header>
+
+  <div class="card">
+
+    <!-- Upload zone -->
+    <div id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" />
+
+      <div id="empty-state">
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <div class="upload-label"><strong>Drop an image here</strong> or click to browse</div>
+        <div class="upload-sub">PNG · JPG · WEBP</div>
+      </div>
+
+      <div id="preview-state">
+        <div class="preview-wrapper" id="preview-wrapper">
+          <img id="preview-img" alt="Preview" />
+          <div class="scan-line"></div>
+          <div class="preview-overlay">
+            <span class="scan-label">Analyzing</span>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button class="btn btn-primary" id="analyze-btn">Analyze</button>
+          <button class="btn btn-ghost" id="reset-btn">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-banner" id="error-banner"></div>
+
+    <div class="divider"></div>
+
+    <!-- Results -->
+    <div id="results">
+      <div class="result-header">
+        <div>
+          <div class="result-label">Detected emotion</div>
+          <div class="result-emotion" id="result-emotion">—</div>
+        </div>
+        <div class="result-confidence" id="result-confidence"></div>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+  </div>
+
+  <footer>COMP 472 · Concordia University · CNN trained on FER2013</footer>
+
+  <script>
+    // ── CONFIG — replace with your Render URL after deploying ─────────────
+    const API_URL = "https://your-app.onrender.com";
+    // ─────────────────────────────────────────────────────────────────────
+
+    const EMOTION_COLORS = {
+      Angry:    "var(--angry)",
+      Engaged:  "var(--engaged)",
+      Happy:    "var(--happy)",
+      Neutral:  "var(--neutral)",
+    };
+
+    const zone        = document.getElementById("upload-zone");
+    const fileInput   = document.getElementById("file-input");
+    const emptyState  = document.getElementById("empty-state");
+    const previewState= document.getElementById("preview-state");
+    const previewImg  = document.getElementById("preview-img");
+    const previewWrap = document.getElementById("preview-wrapper");
+    const analyzeBtn  = document.getElementById("analyze-btn");
+    const resetBtn    = document.getElementById("reset-btn");
+    const results     = document.getElementById("results");
+    const emotionEl   = document.getElementById("result-emotion");
+    const confEl      = document.getElementById("result-confidence");
+    const barsEl      = document.getElementById("bars");
+    const errorBanner = document.getElementById("error-banner");
+
+    let currentFile = null;
+
+    // ── File selection ──────────────────────────────────────────────
+    zone.addEventListener("click", (e) => {
+      if (e.target === analyzeBtn || e.target === resetBtn) return;
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files[0]) loadFile(fileInput.files[0]);
+    });
+
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      zone.classList.add("drag-over");
+    });
+    zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("drag-over");
+      if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+    });
+
+    function loadFile(file) {
+      if (!file.type.startsWith("image/")) return showError("Please upload an image file.");
+      currentFile = file;
+      hideError();
+      hideResults();
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        emptyState.style.display = "none";
+        previewState.style.display = "flex";
+        previewState.style.flexDirection = "column";
+        previewState.style.alignItems = "center";
+        previewState.style.gap = "0";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ── Reset ───────────────────────────────────────────────────────
+    resetBtn.addEventListener("click", () => {
+      currentFile = null;
+      fileInput.value = "";
+      previewState.style.display = "none";
+      emptyState.style.display = "flex";
+      emptyState.style.flexDirection = "column";
+      emptyState.style.alignItems = "center";
+      emptyState.style.gap = "16px";
+      hideResults();
+      hideError();
+      previewWrap.classList.remove("scanning");
+      analyzeBtn.disabled = false;
+    });
+
+    // ── Analyze ─────────────────────────────────────────────────────
+    analyzeBtn.addEventListener("click", async () => {
+      if (!currentFile) return;
+      hideError();
+      hideResults();
+      analyzeBtn.disabled = true;
+      previewWrap.classList.add("scanning");
+
+      const formData = new FormData();
+      formData.append("image", currentFile);
+
+      try {
+        const res = await fetch(`${API_URL}/predict`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Server error");
+        }
+
+        const data = await res.json();
+        showResults(data);
+
+      } catch (err) {
+        showError(err.message === "Failed to fetch"
+          ? "Could not reach the API. Make sure the backend is deployed and the API_URL is updated."
+          : err.message
+        );
+      } finally {
+        previewWrap.classList.remove("scanning");
+        analyzeBtn.disabled = false;
+      }
+    });
+
+    // ── Render results ──────────────────────────────────────────────
+    function showResults(data) {
+      const color = EMOTION_COLORS[data.prediction] || "var(--text)";
+      emotionEl.textContent = data.prediction.toUpperCase();
+      emotionEl.style.color = color;
+      confEl.textContent = `${data.confidence}% confidence`;
+
+      barsEl.innerHTML = "";
+      Object.entries(data.scores)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([name, pct]) => {
+          const row = document.createElement("div");
+          row.className = "bar-row";
+          row.innerHTML = `
+            <span class="bar-name">${name}</span>
+            <div class="bar-track">
+              <div class="bar-fill" data-pct="${pct}" style="background:${EMOTION_COLORS[name] || "#fff"}"></div>
+            </div>
+            <span class="bar-pct">${pct}%</span>
+          `;
+          barsEl.appendChild(row);
+        });
+
+      results.style.display = "block";
+
+      // Animate bars after paint
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.querySelectorAll(".bar-fill").forEach((el) => {
+            el.style.width = `${el.dataset.pct}%`;
+          });
+        });
+      });
+    }
+
+    function hideResults() {
+      results.style.display = "none";
+      barsEl.innerHTML = "";
+    }
+
+    function showError(msg) {
+      errorBanner.textContent = msg;
+      errorBanner.style.display = "block";
+    }
+
+    function hideError() {
+      errorBanner.style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
