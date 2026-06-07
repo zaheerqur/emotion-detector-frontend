@@ -18,7 +18,7 @@
     .nav-right { font-size: 0.8rem; font-weight: 500; color: #999; }
 
     .hero {
-      text-align: center; padding: 64px 24px 48px;
+      text-align: center; padding: 64px 24px 40px;
       max-width: 600px; margin: 0 auto;
     }
     .eyebrow {
@@ -30,14 +30,17 @@
       font-size: clamp(2rem, 5vw, 3rem); font-weight: 900;
       line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 18px;
     }
-    .hero p { font-size: 0.95rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto; }
+    .hero p { font-size: 0.95rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto 20px; }
 
-    /* ── App ── */
+    .disclaimer {
+      display: inline-block; font-size: 0.75rem; color: #AAA; font-weight: 500;
+      line-height: 1.6; max-width: 480px; margin: 0 auto;
+    }
+
     .app { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
 
-    /* ── Loading ── */
     #loading-msg {
-      text-align: center; padding: 40px;
+      text-align: center; padding: 48px;
       font-size: 0.85rem; color: #999; font-weight: 500;
     }
     .spinner {
@@ -48,47 +51,39 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Samples grid ── */
     #samples-grid { display: none; }
 
-    .class-section { margin-bottom: 28px; }
-
-    .class-label {
-      display: flex; align-items: center; gap: 8px;
+    .grid-label {
       font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: #999; margin-bottom: 12px;
+      text-transform: uppercase; color: #CCC; margin-bottom: 14px;
     }
-    .class-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    .faces-row {
-      display: flex; flex-wrap: wrap; gap: 8px;
+    .faces-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: 8px;
+      margin-bottom: 28px;
     }
 
     .face-thumb {
-      width: 88px; height: 88px; border-radius: 8px; overflow: hidden;
+      aspect-ratio: 1; border-radius: 8px; overflow: hidden;
       cursor: pointer; border: 2px solid transparent;
       transition: border-color .15s, transform .1s, opacity .15s;
-      flex-shrink: 0; background: #F0F0F0;
+      background: #F0F0F0;
     }
-    .face-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%); }
+    .face-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(15%); }
     .face-thumb:hover { border-color: #FF6633; transform: scale(1.04); }
-    .face-thumb.selected { border-color: #FF6633; box-shadow: 0 0 0 3px rgba(255,102,51,.2); }
-    .face-thumb.loading { opacity: 0.5; pointer-events: none; }
+    .face-thumb.selected { border-color: #FF6633; box-shadow: 0 0 0 3px rgba(255,102,51,.18); }
+    .face-thumb.loading { opacity: 0.45; pointer-events: none; }
 
-    /* ── Divider ── */
-    .divider { height: 1px; background: #EBEBEB; margin: 8px 0 28px; }
+    .divider { height: 1px; background: #EBEBEB; margin: 4px 0 24px; }
 
-    /* ── Results card ── */
     #results-card {
       display: none; background: #F9F9F9;
       border: 1.5px solid #EBEBEB; border-radius: 14px; overflow: hidden;
-      margin-top: 8px;
     }
     .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #EBEBEB; }
-    .result-micro {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: #bbb; margin-bottom: 6px;
-    }
+    .result-micro { font-size: 0.68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
     .result-emotion { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 900; letter-spacing: -.03em; line-height: 1; }
     .result-conf { margin-top: 8px; font-size: 0.84rem; color: #888; font-weight: 500; }
     .result-conf strong { color: #0F0F0F; }
@@ -101,7 +96,6 @@
     .bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width .8s cubic-bezier(.22,1,.36,1); }
     .bar-pct { width: 38px; text-align: right; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
 
-    /* ── Error ── */
     .error {
       display: none; margin-bottom: 16px; padding: 13px 16px;
       background: #FFF5F5; border: 1px solid #FFDDDD; border-radius: 10px;
@@ -116,9 +110,9 @@
 
     @media (max-width: 600px) {
       nav { padding: 18px 20px; }
-      .hero { padding: 48px 20px 36px; }
+      .hero { padding: 48px 20px 32px; }
       .app { padding: 0 16px 60px; }
-      .face-thumb { width: 72px; height: 72px; }
+      .faces-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
       footer { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
@@ -133,14 +127,19 @@
 <div class="hero">
   <div class="eyebrow">AI · COMP 472 · Concordia University</div>
   <h1>Click a face.<br>Read the emotion.</h1>
-  <p>Select any sample from the FER2013 training dataset. The CNN model will classify the emotion in real time.</p>
+  <p>A convolutional neural network that classifies facial emotions in real time. Click any photo below to run the model.</p>
+  <p class="disclaimer">This model was trained and evaluated on the FER2013 benchmark dataset. Results may vary for photos outside the dataset — that's expected behaviour for any CNN trained on a specific distribution.</p>
 </div>
 
 <div class="app">
   <div class="error" id="error-banner"></div>
-  <div id="loading-msg"><span class="spinner"></span>Loading samples from dataset...</div>
-  <div id="samples-grid"></div>
-  <div class="divider" id="divider" style="display:none;"></div>
+  <div id="loading-msg"><span class="spinner"></span>Loading samples...</div>
+
+  <div id="samples-grid">
+    <div class="grid-label">Sample faces</div>
+    <div class="faces-grid" id="faces-grid"></div>
+    <div class="divider"></div>
+  </div>
 
   <div id="results-card">
     <div class="result-top">
@@ -161,22 +160,15 @@
 </footer>
 
 <script>
-  const API_URL    = "https://emotion-detector-api-7ygm.onrender.com";
-  const REPO       = "zaheerqur/lucid-472-dataset";
-  const SAMPLES_PER_CLASS = 12;
-
-  const CLASSES = [
-    { name: "Angry",   color: "#FF3333" },
-    { name: "Engaged", color: "#4466FF" },
-    { name: "Happy",   color: "#FF9900" },
-    { name: "Neutral", color: "#AAAAAA" },
-  ];
-
-  const COLORS = { Angry:"#FF3333", Engaged:"#4466FF", Happy:"#FF9900", Neutral:"#AAAAAA" };
+  const API_URL = "https://emotion-detector-api-7ygm.onrender.com";
+  const REPO    = "zaheerqur/lucid-472-dataset";
+  const PER_CLASS = 8;
+  const CLASSES = ["Angry", "Engaged", "Happy", "Neutral"];
+  const COLORS  = { Angry:"#FF3333", Engaged:"#4466FF", Happy:"#FF9900", Neutral:"#AAAAAA" };
 
   const loadingMsg  = document.getElementById("loading-msg");
   const samplesGrid = document.getElementById("samples-grid");
-  const divider     = document.getElementById("divider");
+  const facesGrid   = document.getElementById("faces-grid");
   const resultsCard = document.getElementById("results-card");
   const emotionEl   = document.getElementById("result-emotion");
   const confEl      = document.getElementById("result-conf");
@@ -193,57 +185,43 @@
     return arr;
   }
 
-  async function loadClass(cls) {
-    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/Data/${cls.name}`);
-    if (!res.ok) throw new Error(`Failed to load ${cls.name}`);
-    const files = await res.json();
-    const images = files.filter(f => /\.(jpg|jpeg|png)$/i.test(f.name));
-    return shuffle(images).slice(0, SAMPLES_PER_CLASS);
-  }
-
   async function init() {
     try {
-      const results = await Promise.all(CLASSES.map(loadClass));
+      const fetches = CLASSES.map(cls =>
+        fetch(`https://api.github.com/repos/${REPO}/contents/Data/${cls}`)
+          .then(r => r.json())
+          .then(files => files.filter(f => /\.(jpg|jpeg|png)$/i.test(f.name)))
+          .then(files => shuffle(files).slice(0, PER_CLASS))
+      );
+
+      const results = await Promise.all(fetches);
+
+      // Interleave images from all classes so it looks mixed
+      const allImages = [];
+      const maxLen = Math.max(...results.map(r => r.length));
+      for (let i = 0; i < maxLen; i++) {
+        results.forEach(classFiles => { if (classFiles[i]) allImages.push(classFiles[i]); });
+      }
+      shuffle(allImages);
 
       loadingMsg.style.display = "none";
       samplesGrid.style.display = "block";
-      divider.style.display = "block";
 
-      CLASSES.forEach((cls, i) => {
-        const files = results[i];
-
-        const section = document.createElement("div");
-        section.className = "class-section";
-
-        const label = document.createElement("div");
-        label.className = "class-label";
-        label.innerHTML = `<span class="class-dot" style="background:${cls.color}"></span>${cls.name}`;
-
-        const row = document.createElement("div");
-        row.className = "faces-row";
-
-        files.forEach(file => {
-          const thumb = document.createElement("div");
-          thumb.className = "face-thumb";
-
-          const img = document.createElement("img");
-          img.src = file.download_url;
-          img.alt = cls.name;
-          img.loading = "lazy";
-
-          thumb.appendChild(img);
-          thumb.addEventListener("click", () => analyze(thumb, file.download_url));
-          row.appendChild(thumb);
-        });
-
-        section.appendChild(label);
-        section.appendChild(row);
-        samplesGrid.appendChild(section);
+      allImages.forEach(file => {
+        const thumb = document.createElement("div");
+        thumb.className = "face-thumb";
+        const img = document.createElement("img");
+        img.src = file.download_url;
+        img.alt = "face";
+        img.loading = "lazy";
+        thumb.appendChild(img);
+        thumb.addEventListener("click", () => analyze(thumb, file.download_url));
+        facesGrid.appendChild(thumb);
       });
 
     } catch (e) {
       loadingMsg.style.display = "none";
-      showErr("Could not load dataset samples. GitHub API may be rate limited — try refreshing in a minute.");
+      showErr("Could not load samples — GitHub API may be rate limited. Try refreshing in a minute.");
     }
   }
 
@@ -255,7 +233,6 @@
     resultsCard.style.display = "none";
 
     try {
-      // Fetch the image as a blob then send to API
       const imgRes = await fetch(imageUrl);
       const blob = await imgRes.blob();
       const fd = new FormData();
@@ -264,7 +241,6 @@
       const res = await fetch(`${API_URL}/predict`, { method: "POST", body: fd });
       if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Server error"); }
       showResults(await res.json());
-
     } catch (e) {
       showErr(e.message === "Failed to fetch"
         ? "Could not reach the API — it may be waking up. Wait 30 seconds and try again."
