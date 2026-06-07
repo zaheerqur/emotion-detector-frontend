@@ -12,8 +12,9 @@
     /* ── Hero ── */
     .hero { padding: 72px 40px 52px; max-width: 860px; margin: 0 auto; }
     .eyebrow {
-      font-size: 0.73rem; font-weight: 600; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #999; display: block; margin-bottom: 20px;
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #FF6633;
+      background: #FFF2EE; padding: 5px 14px; border-radius: 4px; margin-bottom: 24px;
     }
     .hero h1 {
       font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800;
@@ -27,7 +28,7 @@
     /* ── App ── */
     .app { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
 
-    #loading-msg { padding: 40px 0; font-size: 0.84rem; color: #aaa; font-weight: 500; }
+    #loading-msg { padding: 40px 0; font-size: 0.84rem; color: #888; font-weight: 500; }
     .spinner {
       display: inline-block; width: 16px; height: 16px;
       border: 1.5px solid #E8E8E8; border-top-color: #FF6633;
@@ -40,7 +41,7 @@
     #samples-grid { display: none; }
     .grid-label {
       font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #C8C8C8; margin-bottom: 12px;
+      text-transform: uppercase; color: #999; margin-bottom: 12px;
     }
     .faces-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
@@ -70,7 +71,7 @@
       white-space: nowrap; letter-spacing: 0.02em;
     }
     .btn-upload:hover { background: #FF6633; color: #fff; }
-    .upload-note { font-size: 0.72rem; color: #C8C8C8; font-weight: 400; }
+    .upload-note { font-size: 0.72rem; color: #999; font-weight: 400; }
 
     /* ── Preview ── */
     .preview-inner {
@@ -103,7 +104,7 @@
     .btn-primary:hover { background: #e85a2a; }
     .btn-primary:disabled { opacity: .35; cursor: not-allowed; }
     .btn-ghost { background: transparent; color: #888; border: 1px solid #E8E8E8; }
-    .btn-ghost:hover { border-color: #C8C8C8; color: #444; }
+    .btn-ghost:hover { border-color: #999; color: #444; }
 
     /* ── Results ── */
     #results-card {
@@ -113,7 +114,7 @@
     .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #F0F0F0; }
     .result-micro {
       font-size: 0.67rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: #C8C8C8; margin-bottom: 8px;
+      text-transform: uppercase; color: #999; margin-bottom: 8px;
     }
     .result-emotion {
       font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 800;
@@ -125,7 +126,7 @@
     .bars-wrap { padding: 22px 28px 26px; }
     .bars-label {
       font-size: 0.67rem; font-weight: 600; letter-spacing: .1em;
-      text-transform: uppercase; color: #C8C8C8; margin-bottom: 16px;
+      text-transform: uppercase; color: #999; margin-bottom: 16px;
     }
     .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .bar-name { width: 62px; font-size: 0.79rem; font-weight: 500; color: #888; flex-shrink: 0; }
@@ -147,18 +148,18 @@
     }
     .about-label {
       font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #C8C8C8; margin-bottom: 28px;
+      text-transform: uppercase; color: #999; margin-bottom: 28px;
     }
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
     .about-block h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; color: #222; }
-    .about-block p { font-size: 0.85rem; color: #777; line-height: 1.75; font-weight: 400; }
+    .about-block p { font-size: 0.85rem; color: #555; line-height: 1.75; font-weight: 400; }
 
     /* ── Footer ── */
     footer {
       border-top: 1px solid #F0F0F0; padding: 20px 40px;
       display: flex; justify-content: space-between; align-items: center;
     }
-    footer span { font-size: 0.71rem; color: #C8C8C8; font-weight: 400; }
+    footer span { font-size: 0.71rem; color: #999; font-weight: 400; }
 
     @media (max-width: 640px) {
       .hero { padding: 48px 20px 36px; }
