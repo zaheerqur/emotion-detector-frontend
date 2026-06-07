@@ -26,7 +26,7 @@
     }
 
     /* ── App ── */
-    .app { max-width: 860px; margin: 0 auto; padding: 0 40px 80px; }
+    .app { max-width: 860px; margin: 0 auto; padding: 0 40px 40px; }
 
     #loading-msg { padding: 40px 0; font-size: 0.84rem; color: #888; font-weight: 500; }
     .spinner {
@@ -59,7 +59,7 @@
     .face-thumb.loading { opacity: 0.4; pointer-events: none; }
 
     /* ── Divider ── */
-    .divider { height: 1px; background: #F0F0F0; margin: 0 0 24px; }
+    .divider { height: 1px; background: #EBEBEB; margin: 0 0 24px; }
 
     /* ── Upload row ── */
     .upload-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -141,9 +141,11 @@
       font-size: 0.81rem; color: #B34020; font-weight: 500;
     }
 
+    .about-divider-wrap { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+    .about-divider { height: 1px; background: #EBEBEB; }
     /* ── About ── */
     .about-section {
-      border-top: 1px solid #F0F0F0; padding: 56px 40px;
+      padding: 48px 40px;
       max-width: 860px; margin: 0 auto;
     }
     .about-label {
@@ -224,6 +226,7 @@
   </div>
 </div>
 
+<div class="about-divider-wrap"><div class="about-divider"></div></div>
 <div class="about-section">
   <div class="about-label">About this project</div>
   <div class="about-grid">
