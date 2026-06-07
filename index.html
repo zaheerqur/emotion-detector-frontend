@@ -18,7 +18,7 @@
     .nav-right { font-size: 0.8rem; font-weight: 500; color: #999; }
 
     .hero {
-      text-align: center; padding: 72px 24px 52px;
+      text-align: center; padding: 64px 24px 48px;
       max-width: 600px; margin: 0 auto;
     }
     .eyebrow {
@@ -28,73 +28,61 @@
     }
     .hero h1 {
       font-size: clamp(2rem, 5vw, 3rem); font-weight: 900;
-      line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 20px;
+      line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 18px;
     }
-    .hero p { font-size: 0.98rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto; }
+    .hero p { font-size: 0.95rem; color: #666; line-height: 1.7; max-width: 460px; margin: 0 auto; }
 
-    .app { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+    /* ── App ── */
+    .app { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
 
-    .card {
-      background: #F9F9F9; border: 1.5px solid #EBEBEB;
-      border-radius: 14px; overflow: hidden; margin-bottom: 14px;
+    /* ── Loading ── */
+    #loading-msg {
+      text-align: center; padding: 40px;
+      font-size: 0.85rem; color: #999; font-weight: 500;
+    }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid #EBEBEB; border-top-color: #FF6633;
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Samples grid ── */
+    #samples-grid { display: none; }
+
+    .class-section { margin-bottom: 28px; }
+
+    .class-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #999; margin-bottom: 12px;
+    }
+    .class-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .faces-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
     }
 
-    #upload-zone {
-      padding: 52px 32px; display: flex; flex-direction: column;
-      align-items: center; gap: 16px; cursor: pointer; text-align: center;
+    .face-thumb {
+      width: 88px; height: 88px; border-radius: 8px; overflow: hidden;
+      cursor: pointer; border: 2px solid transparent;
+      transition: border-color .15s, transform .1s, opacity .15s;
+      flex-shrink: 0; background: #F0F0F0;
     }
-    #upload-zone input { display: none; }
-    .upload-icon-wrap {
-      width: 52px; height: 52px; background: #fff;
-      border: 1.5px solid #EBEBEB; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .upload-h { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-    .upload-sub { font-size: 0.82rem; color: #888; }
-    .btn-upload {
-      background: #FF6633; color: #fff; border: none; padding: 11px 26px;
-      border-radius: 8px; font-family: "Golos Text", sans-serif;
-      font-size: 0.87rem; font-weight: 700; cursor: pointer; transition: background .15s;
-    }
-    .btn-upload:hover { background: #e85a2a; }
-    .drop-area.drag-over { opacity: 0.7; }
+    .face-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%); }
+    .face-thumb:hover { border-color: #FF6633; transform: scale(1.04); }
+    .face-thumb.selected { border-color: #FF6633; box-shadow: 0 0 0 3px rgba(255,102,51,.2); }
+    .face-thumb.loading { opacity: 0.5; pointer-events: none; }
 
-    #preview-state { display: none; padding: 20px; flex-direction: column; gap: 14px; }
+    /* ── Divider ── */
+    .divider { height: 1px; background: #EBEBEB; margin: 8px 0 28px; }
 
-    .img-wrap { position: relative; border-radius: 10px; overflow: hidden; background: #e8e8e8; }
-    #preview-img { width: 100%; display: block; }
-
-    .scan-line {
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, #FF6633, transparent); display: none;
-    }
-    .scanning .scan-line { display: block; animation: scan 1.2s linear infinite; }
-    @keyframes scan {
-      0% { top: 0; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; }
-    }
-    .scanning-label {
-      position: absolute; bottom: 10px; left: 10px;
-      background: rgba(255,255,255,.92); border: 1px solid #eee; border-radius: 6px;
-      padding: 4px 10px; font-size: 0.68rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; color: #FF6633; display: none;
-    }
-    .scanning .scanning-label { display: block; animation: blink .8s step-end infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    .preview-actions { display: flex; gap: 10px; }
-    .btn {
-      flex: 1; padding: 12px; border-radius: 8px; font-family: "Golos Text", sans-serif;
-      font-size: 0.87rem; font-weight: 700; cursor: pointer; border: none; transition: background .15s;
-    }
-    .btn-primary { background: #FF6633; color: #fff; }
-    .btn-primary:hover { background: #e85a2a; }
-    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-ghost { background: #fff; color: #555; border: 1.5px solid #EBEBEB; }
-    .btn-ghost:hover { border-color: #bbb; }
-
+    /* ── Results card ── */
     #results-card {
       display: none; background: #F9F9F9;
       border: 1.5px solid #EBEBEB; border-radius: 14px; overflow: hidden;
+      margin-top: 8px;
     }
     .result-top { padding: 28px 28px 22px; border-bottom: 1px solid #EBEBEB; }
     .result-micro {
@@ -113,8 +101,9 @@
     .bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width .8s cubic-bezier(.22,1,.36,1); }
     .bar-pct { width: 38px; text-align: right; font-size: 0.81rem; font-weight: 600; color: #555; flex-shrink: 0; }
 
+    /* ── Error ── */
     .error {
-      display: none; margin-bottom: 14px; padding: 13px 16px;
+      display: none; margin-bottom: 16px; padding: 13px 16px;
       background: #FFF5F5; border: 1px solid #FFDDDD; border-radius: 10px;
       font-size: 0.82rem; color: #CC3333; font-weight: 500;
     }
@@ -125,10 +114,11 @@
     }
     footer span { font-size: 0.73rem; color: #bbb; font-weight: 500; }
 
-    @media (max-width: 540px) {
+    @media (max-width: 600px) {
       nav { padding: 18px 20px; }
       .hero { padding: 48px 20px 36px; }
       .app { padding: 0 16px 60px; }
+      .face-thumb { width: 72px; height: 72px; }
       footer { padding: 16px 20px; flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
@@ -142,44 +132,15 @@
 
 <div class="hero">
   <div class="eyebrow">AI · COMP 472 · Concordia University</div>
-  <h1>Upload a face.<br>Read the emotion.</h1>
-  <p>A convolutional neural network trained on the FER2013 dataset. Upload any photo with a face and the model classifies the emotion in real time.</p>
+  <h1>Click a face.<br>Read the emotion.</h1>
+  <p>Select any sample from the FER2013 training dataset. The CNN model will classify the emotion in real time.</p>
 </div>
 
 <div class="app">
   <div class="error" id="error-banner"></div>
-
-  <div class="card">
-    <div id="upload-zone">
-      <input type="file" id="file-input" accept="image/*" />
-      <div class="drop-area" id="drop-area">
-        <div class="upload-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-        </div>
-        <div>
-          <div class="upload-h">Drop an image here</div>
-          <div class="upload-sub">PNG, JPG or WEBP · works best with a clear face photo</div>
-        </div>
-        <button class="btn-upload">Choose file</button>
-      </div>
-    </div>
-
-    <div id="preview-state">
-      <div class="img-wrap" id="img-wrap">
-        <img id="preview-img" alt="Preview" />
-        <div class="scan-line"></div>
-        <div class="scanning-label">Analyzing...</div>
-      </div>
-      <div class="preview-actions">
-        <button class="btn btn-primary" id="analyze-btn">Analyze</button>
-        <button class="btn btn-ghost" id="reset-btn">Try another</button>
-      </div>
-    </div>
-  </div>
+  <div id="loading-msg"><span class="spinner"></span>Loading samples from dataset...</div>
+  <div id="samples-grid"></div>
+  <div class="divider" id="divider" style="display:none;"></div>
 
   <div id="results-card">
     <div class="result-top">
@@ -200,71 +161,118 @@
 </footer>
 
 <script>
-  const API_URL = "https://emotion-detector-api-7ygm.onrender.com";
+  const API_URL    = "https://emotion-detector-api-7ygm.onrender.com";
+  const REPO       = "zaheerqur/lucid-472-dataset";
+  const SAMPLES_PER_CLASS = 12;
+
+  const CLASSES = [
+    { name: "Angry",   color: "#FF3333" },
+    { name: "Engaged", color: "#4466FF" },
+    { name: "Happy",   color: "#FF9900" },
+    { name: "Neutral", color: "#AAAAAA" },
+  ];
+
   const COLORS = { Angry:"#FF3333", Engaged:"#4466FF", Happy:"#FF9900", Neutral:"#AAAAAA" };
 
-  const uploadZone  = document.getElementById("upload-zone");
-  const dropArea    = document.getElementById("drop-area");
-  const fileInput   = document.getElementById("file-input");
-  const previewState= document.getElementById("preview-state");
-  const previewImg  = document.getElementById("preview-img");
-  const imgWrap     = document.getElementById("img-wrap");
-  const analyzeBtn  = document.getElementById("analyze-btn");
-  const resetBtn    = document.getElementById("reset-btn");
+  const loadingMsg  = document.getElementById("loading-msg");
+  const samplesGrid = document.getElementById("samples-grid");
+  const divider     = document.getElementById("divider");
   const resultsCard = document.getElementById("results-card");
   const emotionEl   = document.getElementById("result-emotion");
   const confEl      = document.getElementById("result-conf");
   const barsEl      = document.getElementById("bars");
   const errorEl     = document.getElementById("error-banner");
 
-  let currentFile = null;
+  let selectedThumb = null;
 
-  uploadZone.addEventListener("click", (e) => {
-    if (e.target.closest("#preview-state")) return;
-    fileInput.click();
-  });
-  fileInput.addEventListener("change", () => { if (fileInput.files[0]) load(fileInput.files[0]); });
-  dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("drag-over"); });
-  dropArea.addEventListener("dragleave", () => dropArea.classList.remove("drag-over"));
-  dropArea.addEventListener("drop", (e) => {
-    e.preventDefault(); dropArea.classList.remove("drag-over");
-    if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
-  });
-
-  function load(file) {
-    if (!file.type.startsWith("image/")) return showErr("Please upload an image file.");
-    currentFile = file; hideErr(); resultsCard.style.display = "none";
-    const r = new FileReader();
-    r.onload = (e) => {
-      previewImg.src = e.target.result;
-      uploadZone.style.display = "none";
-      previewState.style.cssText = "display:flex;flex-direction:column;gap:14px;padding:20px;";
-    };
-    r.readAsDataURL(file);
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 
-  resetBtn.addEventListener("click", () => {
-    currentFile = null; fileInput.value = "";
-    previewState.style.display = "none"; uploadZone.style.display = "flex";
-    resultsCard.style.display = "none"; imgWrap.classList.remove("scanning");
-    analyzeBtn.disabled = false; hideErr();
-  });
+  async function loadClass(cls) {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/Data/${cls.name}`);
+    if (!res.ok) throw new Error(`Failed to load ${cls.name}`);
+    const files = await res.json();
+    const images = files.filter(f => /\.(jpg|jpeg|png)$/i.test(f.name));
+    return shuffle(images).slice(0, SAMPLES_PER_CLASS);
+  }
 
-  analyzeBtn.addEventListener("click", async () => {
-    if (!currentFile) return;
-    hideErr(); analyzeBtn.disabled = true; imgWrap.classList.add("scanning");
-    resultsCard.style.display = "none";
-    const fd = new FormData(); fd.append("image", currentFile);
+  async function init() {
     try {
-      const res = await fetch(`${API_URL}/predict`, { method:"POST", body:fd });
+      const results = await Promise.all(CLASSES.map(loadClass));
+
+      loadingMsg.style.display = "none";
+      samplesGrid.style.display = "block";
+      divider.style.display = "block";
+
+      CLASSES.forEach((cls, i) => {
+        const files = results[i];
+
+        const section = document.createElement("div");
+        section.className = "class-section";
+
+        const label = document.createElement("div");
+        label.className = "class-label";
+        label.innerHTML = `<span class="class-dot" style="background:${cls.color}"></span>${cls.name}`;
+
+        const row = document.createElement("div");
+        row.className = "faces-row";
+
+        files.forEach(file => {
+          const thumb = document.createElement("div");
+          thumb.className = "face-thumb";
+
+          const img = document.createElement("img");
+          img.src = file.download_url;
+          img.alt = cls.name;
+          img.loading = "lazy";
+
+          thumb.appendChild(img);
+          thumb.addEventListener("click", () => analyze(thumb, file.download_url));
+          row.appendChild(thumb);
+        });
+
+        section.appendChild(label);
+        section.appendChild(row);
+        samplesGrid.appendChild(section);
+      });
+
+    } catch (e) {
+      loadingMsg.style.display = "none";
+      showErr("Could not load dataset samples. GitHub API may be rate limited — try refreshing in a minute.");
+    }
+  }
+
+  async function analyze(thumb, imageUrl) {
+    if (selectedThumb) selectedThumb.classList.remove("selected");
+    selectedThumb = thumb;
+    thumb.classList.add("selected", "loading");
+    hideErr();
+    resultsCard.style.display = "none";
+
+    try {
+      // Fetch the image as a blob then send to API
+      const imgRes = await fetch(imageUrl);
+      const blob = await imgRes.blob();
+      const fd = new FormData();
+      fd.append("image", blob, "face.jpg");
+
+      const res = await fetch(`${API_URL}/predict`, { method: "POST", body: fd });
       if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Server error"); }
       showResults(await res.json());
-    } catch(e) {
+
+    } catch (e) {
       showErr(e.message === "Failed to fetch"
         ? "Could not reach the API — it may be waking up. Wait 30 seconds and try again."
         : e.message);
-    } finally { imgWrap.classList.remove("scanning"); analyzeBtn.disabled = false; }
-  });
+    } finally {
+      thumb.classList.remove("loading");
+    }
+  }
 
   function showResults(data) {
     const color = COLORS[data.prediction] || "#0F0F0F";
@@ -272,13 +280,18 @@
     emotionEl.style.color = color;
     confEl.innerHTML = `<strong>${data.confidence}%</strong> confidence`;
     barsEl.innerHTML = "";
-    Object.entries(data.scores).sort((a,b)=>b[1]-a[1]).forEach(([name,pct]) => {
+    Object.entries(data.scores).sort((a,b)=>b[1]-a[1]).forEach(([name, pct]) => {
       const row = document.createElement("div");
       row.className = "bar-row";
-      row.innerHTML = `<span class="bar-name">${name}</span><div class="bar-track"><div class="bar-fill" data-pct="${pct}" style="background:${COLORS[name]||'#ccc'}"></div></div><span class="bar-pct">${pct}%</span>`;
+      row.innerHTML = `
+        <span class="bar-name">${name}</span>
+        <div class="bar-track"><div class="bar-fill" data-pct="${pct}" style="background:${COLORS[name]||'#ccc'}"></div></div>
+        <span class="bar-pct">${pct}%</span>
+      `;
       barsEl.appendChild(row);
     });
     resultsCard.style.display = "block";
+    resultsCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       document.querySelectorAll(".bar-fill").forEach(el=>{ el.style.width = el.dataset.pct+"%"; });
     }));
@@ -286,6 +299,8 @@
 
   function showErr(msg) { errorEl.textContent = msg; errorEl.style.display = "block"; }
   function hideErr() { errorEl.style.display = "none"; }
+
+  init();
 </script>
 </body>
 </html>
